@@ -2,22 +2,18 @@
 
 var httpClient = require("http/v4/client");
 
-exports.execute = function(method, url, options) {
-	switch (method.toUpperCase()) {
-		case "GET":
-			return httpClient.get(url, options);
-		case "POST":
-			return httpClient.post(url, options);
-		case "PUT":
-			return httpClient.put(url, options);
-		case "PATCH":
-			return httpClient.patch(url, options);
-		case "DELETE":
-			return httpClient.delete(url, options);
-	}
+var method = Client.prototype;
+
+function Client(configurations, path) {
+	this.configurations = configurations;
+	this.path = path;
+}
+
+method.getUrl = function() {
+	return this.configurations.host + this.path;
 };
 
-exports.getQueryParameters = function(parameters) {
+method.getQueryParameters = function(parameters) {
 	var queryParameters = "";
 	if (parameters !== undefined && parameters !== null) {
 		for (var i in parameters) {
@@ -33,3 +29,56 @@ exports.getQueryParameters = function(parameters) {
 	}
 	return queryParameters;
 };
+
+method.getOptions = function(entity) {
+	var options = {
+		headers: this.configurations.headers,
+		sslTrustAllEnabled: true
+	};
+	if (entity !== undefined && entity !== null) {
+		options.headers.push({
+			name: "Content-Type",
+			value: "application/json"
+		});
+		options.text = JSON.stringify(entity);
+	}
+	return options;
+};
+
+method.list = function(queryParameters, options) {
+	var url = this.getUrl() + this.getQueryParameters(queryParameters);
+	var requestOptions = options ? options : this.getOptions();
+	return httpClient.get(url, requestOptions);
+};
+
+method.get = function(id, queryParameters, options) {
+	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
+	var requestOptions = options ? options : this.getOptions();
+	return httpClient.get(url, requestOptions);
+};
+
+method.create = function(entity, queryParameters, options) {
+	var url = this.getUrl() + this.getQueryParameters(queryParameters);
+	var requestOptions = options ? options : this.getOptions(entity);
+	return httpClient.post(url, requestOptions);
+};
+
+method.update = function(entity, queryParameters, options) {
+	var url = this.getUrl() + this.getQueryParameters(queryParameters);
+	var requestOptions = options ? options : this.getOptions(entity);
+	return httpClient.put(url, requestOptions);
+};
+
+method.patch = function(entity, queryParameters, options) {
+	var url = this.getUrl() + this.getQueryParameters(queryParameters);
+	var requestOptions = options ? options : this.getOptions(entity);
+	return httpClient.patch(url, requestOptions);
+};
+
+method.delete = function(id, queryParameters, options) {
+	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
+	var requestOptions = options ? options : this.getOptions();
+	return httpClient.delete(url, requestOptions);
+};
+
+module.exports = Client;
