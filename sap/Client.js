@@ -63,8 +63,8 @@ method.create = function(entity, queryParameters, options) {
 	return httpClient.post(url, requestOptions);
 };
 
-method.update = function(entity, queryParameters, options) {
-	var url = this.getUrl() + this.getQueryParameters(queryParameters);
+method.update = function(id, entity, queryParameters, options) {
+	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
 	var requestOptions = options ? options : this.getOptions(entity);
 	return httpClient.put(url, requestOptions);
 };
