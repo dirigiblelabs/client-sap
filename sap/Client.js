@@ -48,37 +48,56 @@ method.getOptions = function(entity) {
 method.list = function(queryParameters, options) {
 	var url = this.getUrl() + this.getQueryParameters(queryParameters);
 	var requestOptions = options ? options : this.getOptions();
-	return httpClient.get(url, requestOptions);
+	var response = httpClient.get(url, requestOptions);
+
+	return getResponseData(response);
 };
 
 method.get = function(id, queryParameters, options) {
 	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
 	var requestOptions = options ? options : this.getOptions();
-	return httpClient.get(url, requestOptions);
+	var response = httpClient.get(url, requestOptions);
+	return getResponseData(response);
 };
 
 method.create = function(entity, queryParameters, options) {
 	var url = this.getUrl() + this.getQueryParameters(queryParameters);
 	var requestOptions = options ? options : this.getOptions(entity);
-	return httpClient.post(url, requestOptions);
+	var response = httpClient.post(url, requestOptions);
+	return getResponseData(response);
 };
 
 method.update = function(id, entity, queryParameters, options) {
 	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
 	var requestOptions = options ? options : this.getOptions(entity);
-	return httpClient.put(url, requestOptions);
+	var response = httpClient.put(url, requestOptions);
+	return getResponseData(response);
 };
 
 method.patch = function(entity, queryParameters, options) {
 	var url = this.getUrl() + this.getQueryParameters(queryParameters);
 	var requestOptions = options ? options : this.getOptions(entity);
-	return httpClient.patch(url, requestOptions);
+	var response = httpClient.patch(url, requestOptions);
+	return getResponseData(response);
 };
 
 method.delete = function(id, queryParameters, options) {
 	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
 	var requestOptions = options ? options : this.getOptions();
-	return httpClient.delete(url, requestOptions);
+	var response = httpClient.delete(url, requestOptions);
+	return getResponseData(response);
 };
+
+function getResponseData(response) {
+	var text = response.text;
+	if (isJsonResponse(response)) {
+		return JSON.parse(text);
+	}
+	return text;
+}
+
+function isJsonResponse(response) {
+	return response.headers.filter(e => e.name === "Content-Type")[0].value.indexOf("application/json") >= 0;
+}
 
 module.exports = Client;
