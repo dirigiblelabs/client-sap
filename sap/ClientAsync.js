@@ -10,8 +10,8 @@ function ClientAsync(configurations, path) {
 	this.path = path;
 }
 
-method.getUrl = function() {
-	return this.configurations.host + this.path;
+method.getUrl = function(queryParameters, id) {
+	return this.configurations.host + this.path + (id || "") + this.getQueryParameters(queryParameters);
 };
 
 method.getQueryParameters = function(parameters) {
@@ -31,54 +31,55 @@ method.getQueryParameters = function(parameters) {
 	return queryParameters;
 };
 
-method.getOptions = function(entity) {
-	var options = {
+method.getOptions = function(options, entity) {
+	var defaultOptions = {
 		headers: this.configurations.headers,
 		sslTrustAllEnabled: true
 	};
 	if (entity !== undefined && entity !== null) {
-		options.headers.push({
+		defaultOptions.headers.push({
 			name: "Content-Type",
 			value: "application/json"
 		});
-		options.text = JSON.stringify(entity);
+		defaultOptions.text = JSON.stringify(entity);
 	}
-	return options;
+	Object.assign(defaultOptions, options);
+	return defaultOptions;
 };
 
 method.listAsync = function(callback, queryParameters, options) {
-	var url = this.getUrl() + this.getQueryParameters(queryParameters);
-	var requestOptions = options ? options : this.getOptions();
+	var url = this.getUrl(queryParameters);
+	var requestOptions = this.getOptions(options);
 	clientAsync.getAsync(url, callback, requestOptions);
 };
 
 method.getAsync = function(callback, id, queryParameters, options) {
-	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
-	var requestOptions = options ? options : this.getOptions();
+	var url = this.getUrl(queryParameters, id);
+	var requestOptions = this.getOptions(options);
 	clientAsync.getAsync(url, callback, requestOptions);
 };
 
 method.createAsync = function(callback, entity, queryParameters, options) {
-	var url = this.getUrl() + this.getQueryParameters(queryParameters);
-	var requestOptions = options ? options : this.getOptions(entity);
+	var url = this.getUrl(queryParameters);
+	var requestOptions = this.getOptions(options, entity);
 	clientAsync.postAsync(url, callback, requestOptions);
 };
 
 method.updateAsync = function(callback, id, entity, queryParameters, options) {
-	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
-	var requestOptions = options ? options : this.getOptions(entity);
+	var url = this.getUrl(queryParameters, id);
+	var requestOptions = this.getOptions(options, entity);
 	clientAsync.putAsync(url, callback, requestOptions);
 };
 
 method.patchAsync = function(callback, entity, queryParameters, options) {
-	var url = this.getUrl() + this.getQueryParameters(queryParameters);
-	var requestOptions = options ? options : this.getOptions(entity);
+	var url = this.getUrl(queryParameters);
+	var requestOptions = this.getOptions(options, entity);
 	clientAsync.patchAsync(url, callback, requestOptions);
 };
 
 method.deleteAsync = function(callback, id, queryParameters, options) {
-	var url = this.getUrl() + id + this.getQueryParameters(queryParameters);
-	var requestOptions = options ? options : this.getOptions();
+	var url = this.getUrl(queryParameters, id);
+	var requestOptions = this.getOptions(options);
 	clientAsync.deleteAsync(url, callback, requestOptions);
 };
 
