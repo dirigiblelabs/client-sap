@@ -89,6 +89,7 @@ method.deleteAsync = function(callback, id, queryParameters, options) {
 
 method.execute = function() {
 	clientAsync.execute();
+	clientAsync = httpClientAsync.getInstnace();
 };
 
 module.exports = ClientAsync;
