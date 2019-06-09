@@ -39,8 +39,12 @@ method.getOptions = function(options, entity) {
 		defaultOptions.headers.push({
 			name: "Content-Type",
 			value: "application/json"
+		}, {
+			name: "Accept",
+			value: "application/json"
 		});
 		defaultOptions.text = JSON.stringify(entity);
+		defaultOptions.characterEncodingEnabled = false;
 	}
 	Object.assign(defaultOptions, options);
 	return defaultOptions;
@@ -97,7 +101,8 @@ function getResponseData(response) {
 }
 
 function isJsonResponse(response) {
-	return response.headers.filter(e => e.name === "Content-Type")[0].value.indexOf("application/json") >= 0;
+	var contentTypeHeader = response.headers.filter(e => e.name === "Content-Type");
+	return contentTypeHeader.length > 0 && contentTypeHeader[0].value.indexOf("application/json") >= 0;
 }
 
 module.exports = Client;

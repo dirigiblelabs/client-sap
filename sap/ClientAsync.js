@@ -40,8 +40,12 @@ method.getOptions = function(options, entity) {
 		defaultOptions.headers.push({
 			name: "Content-Type",
 			value: "application/json"
+		}, {
+			name: "Accept",
+			value: "application/json"
 		});
 		defaultOptions.text = JSON.stringify(entity);
+		defaultOptions.characterEncodingEnabled = false;
 	}
 	Object.assign(defaultOptions, options);
 	return defaultOptions;

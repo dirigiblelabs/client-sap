@@ -3,6 +3,7 @@
 var method = QueryBuilder.prototype;
 
 function QueryBuilder() {
+	this.$format = "json";
 }
 
 method.list = function() {
@@ -32,8 +33,12 @@ method.filter = function() {
 	return this;
 };
 
-method.expand = function(expand) {
-	throw Error("Method Not Implemented Yet");
+method.expand = function() {
+	this.$expand = "";
+	for (var i = 0; i < arguments.length; i ++) {
+		this.$expand += i + 1 < arguments.length ? arguments[i] + "," : arguments[i];
+	}
+	return this;
 };
 
 method.format = function(format) {
