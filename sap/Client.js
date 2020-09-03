@@ -101,7 +101,7 @@ function getResponseData(response) {
 }
 
 function isJsonResponse(response) {
-	var contentTypeHeader = response.headers.filter(e => e.name === "Content-Type");
+	var contentTypeHeader = response.headers.filter(e => e.name === "Content-Type" || e.name === "content-type");
 	return contentTypeHeader.length > 0 && contentTypeHeader[0].value.indexOf("application/json") >= 0;
 }
 
